@@ -16,6 +16,14 @@ except ImportError:
     sys.path.insert(0, "..")
     from emotiv import epoc, utils
 
+def headsetRead(headset):
+	idx, data = headset.acquire_data_fast(9)
+	print "Battery: %d %%" % headset.battery
+	print "Contact qualities"
+	print headset.quality
+	metadata = {"quality": headset.quality}
+	utils.save_as_matlab(data, headset.channel_mask, folder="../eeg_data", metadata=metadata)
+
 def input_thread(a_list):
     raw_input()
     a_list.append(True)
@@ -24,13 +32,7 @@ def dataAcquisitionLoop(headset):
     a_list = []
     thread.start_new_thread(input_thread, (a_list,))
     while not a_list:
-        idx, data = headset.acquire_data_fast(9)
-
-		print "Battery: %d %%" % headset.battery
-		print "Contact qualities"
-		print headset.quality
-
-		utils.save_as_matlab(data, headset.channel_mask, folder="../eeg_data")
+		headsetRead(headset)
 
 
 def main():
@@ -49,7 +51,7 @@ def main():
 
     # Acquire
     dataAcquisitionLoop(headset)
-	print "Data Acquisition Terminated."
+	#print "Data Acquisition Terminated."
     try:
         headset.disconnect()
     except e:
@@ -57,4 +59,3 @@ def main():
 
 if __name__ == "__main__":
     sys.exit(main())
-
