@@ -1,3 +1,5 @@
 *.pyc
 /eeg_data/*
 /build/*
+.vscode/settings.json
+
