@@ -44,8 +44,9 @@ def get_level(raw_data, bits):
 def save_as_matlab(_buffer, channel_mask, folder=None, prefix=None, filename=None, metadata=None):
     """Save as matlab data with optional metadata."""
     nr_samples = _buffer[:, 0].size
+    nr_channels = _buffer[0, :].size
     trial = np.zeros((1,), dtype=np.object)
-    trial[0] = _buffer[:, 1:].astype(np.float64).T
+    trial[0] = _buffer[:, :].astype(np.float64).T
     trial_time = np.zeros((1,), dtype=np.object)
     trial_time[0] = np.array(range(nr_samples)) / 128.0
 
@@ -58,6 +59,7 @@ def save_as_matlab(_buffer, channel_mask, folder=None, prefix=None, filename=Non
 
     matlab_data = {}
     matlab_data["data"] = fieldtrip_data
+    matlab_data["numberOfChannels"] = nr_channels
 
     # Inject metadata if any
     if metadata:
@@ -80,3 +82,4 @@ def save_as_matlab(_buffer, channel_mask, folder=None, prefix=None, filename=Non
         filename = os.path.join(folder, filename)
 
     savemat(filename, matlab_data, oned_as='row')
+

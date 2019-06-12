@@ -14,9 +14,14 @@ if __name__ == '__main__':
     headset = epoc.EPOC()
     print "Found headset with serial number: ", headset.serial_number
 
+    # info = pylsl.stream_info('Emotiv EEG', 'EEG', len(headset.channel_mask),
+    #                          headset.sampling_rate,
+    #                          pylsl.cf_int16,
+    #                          str(headset.serial_number))
+
     info = pylsl.stream_info('Emotiv EEG', 'EEG', len(headset.channel_mask),
                              headset.sampling_rate,
-                             pylsl.cf_int16,
+                             pylsl.cf_float32,
                              str(headset.serial_number))
 
     info_desc = info.desc()

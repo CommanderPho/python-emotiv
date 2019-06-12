@@ -33,7 +33,7 @@ def main():
     try:
         duration = int(sys.argv[1])
     except:
-        print "Usage: %s <duration> [ch1,ch2,..,chN]" % sys.argv[0]
+        print "Usage: %s <duration-in-seconds> [ch1,ch2,..,chN]" % sys.argv[0]
         return 1
 
     channels = None
