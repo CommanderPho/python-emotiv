@@ -296,6 +296,7 @@ class EPOC(object):
 
     def get_sample(self):
         """Returns an array of EEG samples."""
+        # Called by LabStreamingLayer (LSL) Script, the "acquire_data(self, duration)" function
         try:
             raw_data = self._cipher.decrypt(self.endpoint.read(32))
             # Parse counter
@@ -326,17 +327,22 @@ class EPOC(object):
                 raise EPOCUSBError("USB I/O error with errno = %d" %
                         usb_exception.errno)
 
-    def acquire_data(self, duration):
+    def acquire_data(self, duration, sample_callback=None):
         """Acquire data from the EPOC headset."""
-
+        # Compute the total_samples to acquire from the provided duration
         total_samples = duration * self.sampling_rate
+        # Pre-allocate the buffer to hold the data.
+        # TODO: why is this allocated with (total_samples, len(self.channel_mask) + 1) when the regular acquire_data_fast(...) only allocates with (total_samples, len(self.channel_mask))
         _buffer = np.ndarray((total_samples, len(self.channel_mask) + 1),
                 dtype=np.uint16)
         ctr = 0
         while ctr < total_samples:
-            # Fetch new data
+            # Fetch new data using the regular (get_sample)
             data = self.get_sample()
             if data:
+                # Send the callback
+                if sample_callback:
+                    sample_callback(data)
                 # Prepend sequence numbers
                 _buffer[ctr] = np.insert(np.array(data), 0, self.counter)
                 ctr += 1
@@ -359,6 +365,7 @@ class EPOC(object):
         bit_indexes = [self.bit_indexes[n] for n in self.channel_mask]
         # Packet idx to keep track of losses
         idx = []
+        # Compute the total_samples to acquire from the provided duration
         total_samples = duration * self.sampling_rate
 
         # Pre-allocated array
