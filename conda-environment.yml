@@ -1,5 +1,6 @@
-name: python-emotiv
+name: python2-emotiv
 dependencies:
+  - python=2.7
   - numpy
   - pycrypto
   - scipy
