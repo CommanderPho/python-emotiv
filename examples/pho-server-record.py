@@ -33,7 +33,6 @@ def callback_single_sample_complete(outlet, sampleData):
     outlet.push_sample(pylsl.vectori(sampleData), pylsl.local_clock())
 
 
-
 def headsetRead(headset, single_sample_read_callback):
 	#idx, data = headset.acquire_data_fast(9)
 	data = headset.acquire_data(PacketSendDuration, sample_callback=single_sample_read_callback)
@@ -47,7 +46,12 @@ def input_thread(a_list):
 	raw_input()
 	a_list.append(True)
 
-def dataAcquisitionLoop(headset, outlets, clientSock):
+
+def save_as_mat_thread(data, channel_mask, metadata):
+	utils.save_as_matlab(data, channel_mask, folder="../eeg_data", metadata=metadata)
+
+# def dataAcquisitionLoop(headset, outlets, clientSock):
+def dataAcquisitionLoop(headset, outlets):
 	a_list = []
 	thread.start_new_thread(input_thread, (a_list,))
 	# Build the callback function as a lambda function
@@ -65,10 +69,10 @@ def dataAcquisitionLoop(headset, outlets, clientSock):
         #             print "%10s: %.2f %20s: %.2f" % (channel, data[i], "Quality", e.quality[channel])
 		outlets['metadata'].push_sample(pylsl.vectori(metadataOutputVector), pylsl.local_clock())
 		# Send to the UDP server
-		stringMetadata = json.dumps(metadata)
-		clientSock.sendto(stringMetadata, (UDP_IP_ADDRESS, UDP_PORT_NO))
-		# Could do in a separate thread?
-		utils.save_as_matlab(data, headset.channel_mask, folder="../eeg_data", metadata=metadata)
+		#stringMetadata = json.dumps(metadata)
+		#clientSock.sendto(stringMetadata, (UDP_IP_ADDRESS, UDP_PORT_NO))
+		# Perform the writing in a separate thread.
+		thread.start_new_thread(save_as_mat_thread, (data, headset.channel_mask, metadata))
 
 
 def setupLabStreamingLayer(headset):
@@ -112,14 +116,15 @@ def main():
 		headset.set_channel_mask(channels)
 
 	# Setup UDP connection if possible
-	clientSock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-	clientSock.sendto(Message, (UDP_IP_ADDRESS, UDP_PORT_NO))
+	#clientSock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+	#clientSock.sendto(Message, (UDP_IP_ADDRESS, UDP_PORT_NO))
 
 	# Setup LabStreamingLayer connection
 	outlets = setupLabStreamingLayer(headset)
 
 	# Acquire
-	dataAcquisitionLoop(headset, outlets, clientSock)
+	# dataAcquisitionLoop(headset, outlets, clientSock)
+	dataAcquisitionLoop(headset, outlets)
 	#print "Data Acquisition Terminated."
 	try:
 		headset.disconnect()

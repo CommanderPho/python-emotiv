@@ -67,7 +67,8 @@ def save_as_matlab(_buffer, channel_mask, folder=None, prefix=None, filename=Non
             matlab_data[key] = value
 
     # Put time of recording
-    date_info = time.strftime("%d-%m-%Y_%H-%M-%S")
+    ## TODO: This seems to be the only time that the current time is got for the file. Since the file is saved to .mat format after logging completes, we have no clue what the initial recording start time was.
+    date_info = time.strftime("%d-%m-%Y_%H-%M-%S") # TODO: Include milliseconds?
     matlab_data["date"] = date_info
 
     if not filename:
