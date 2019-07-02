@@ -51,6 +51,9 @@ specification to ease the process of analysing signals with FieldTrip.
 Installation
 ============
 
+Installing on macOS:
+```brew install pygobject3 gtk+3```
+
 Just run ```python setup.py install``` to install the module on your system.
 
 Testing

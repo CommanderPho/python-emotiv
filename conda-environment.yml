@@ -1,0 +1,13 @@
+name: python-emotiv
+dependencies:
+  - numpy
+  - pycrypto
+  - scipy
+  - wheel
+  - nose
+  - cryptography
+  - pyOpenSSL
+  - python-dateutil
+  - pip:
+    - pylsl
+    - pyusb
