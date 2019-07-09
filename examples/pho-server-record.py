@@ -134,7 +134,7 @@ def main():
 			headset.set_channel_mask(channels)
 			
 	except ValueError as e:
-		if e == ValueError("The device has no langid"):
+		if str(e) == ValueError("The device has no langid"):
 			print("The USB Dongle doesn't appear to be connected.")
 			print("\t Please connect it and then try again!")
 			raise
