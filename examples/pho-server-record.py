@@ -81,6 +81,8 @@ def dataAcquisitionLoop(headset, outlets):
 
 
 
+
+
 def setupLabStreamingLayer(headset):
     # (self, name='untitled', type='', channel_count=1, nominal_srate=IRREGULAR_RATE, channel_format=cf_float32, source_id='', handle=None)
 	dataStreamInfo = pylsl.stream_info('Emotiv EEG', 'EEG', len(headset.channel_mask), headset.sampling_rate, pylsl.cf_float32, str(headset.serial_number))
@@ -116,10 +118,20 @@ def main():
 	except:
 		pass
 
-	# Setup headset
-	headset = epoc.EPOC(enable_gyro=False)
-	if channels:
-		headset.set_channel_mask(channels)
+	try:
+		# Setup headset
+		headset = epoc.EPOC(enable_gyro=False)
+		if channels:
+			headset.set_channel_mask(channels)
+			
+	except ValueError as e:
+		if e == "The device has no langid":
+			print("The USB Dongle doesn't appear to be connected.")
+			print("\t Please connect it and then try again!")
+			raise
+		else:
+			print("Other Value Error: ", e)
+			raise
 
 	# Setup UDP connection if possible
 	#clientSock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
