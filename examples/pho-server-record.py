@@ -37,23 +37,23 @@ def callback_single_sample_complete(outlet, sampleTimestamp, sampleData):
 def headsetRead(headset, single_sample_read_callback):
 	#idx, data = headset.acquire_data_fast(9)
 	if ShouldTrackDroppedPackets:
-		data = headset.acquire_data_tracking_dropped(PacketSendDuration, sample_callback=single_sample_read_callback)
+		(timestamps, data) = headset.acquire_data_tracking_dropped(PacketSendDuration, sample_callback=single_sample_read_callback)
 	else:
-		data = headset.acquire_data(PacketSendDuration, sample_callback=single_sample_read_callback)
+		(timestamps, data) = headset.acquire_data(PacketSendDuration, sample_callback=single_sample_read_callback)
 
 	print "Battery: %d %%" % headset.battery
 	print "Contact qualities"
 	print headset.quality
 	metadata = {"quality": headset.quality,"battery": headset.battery}
-	return (data, metadata)
+	return (timestamps, data, metadata)
 
 def input_thread(a_list):
 	raw_input()
 	a_list.append(True)
 
 
-def save_as_mat_thread(data, channel_mask, metadata):
-	utils.save_as_matlab(data, channel_mask, folder="../eeg_data", metadata=metadata)
+def save_as_mat_thread(timestamps, data, channel_mask, metadata):
+	utils.save_as_matlab(data, channel_mask, folder="../eeg_data", metadata=metadata, timestamps=timestamps)
 
 # def dataAcquisitionLoop(headset, outlets, clientSock):
 def dataAcquisitionLoop(headset, outlets):
@@ -63,7 +63,7 @@ def dataAcquisitionLoop(headset, outlets):
 	callback_single_single_sample_complete_with_outlet = lambda t, d: callback_single_sample_complete(outlets['data'], t, d)
 	while not a_list:
 		try:
-			data, metadata = headsetRead(headset, callback_single_single_sample_complete_with_outlet)
+			timestamps, data, metadata = headsetRead(headset, callback_single_single_sample_complete_with_outlet)
 			# Push the complete metadata on write
 			metadataOutputVector = []
 			# print("battery type:", type(float(metadata["battery"])))
@@ -78,7 +78,7 @@ def dataAcquisitionLoop(headset, outlets):
 			# stringMetadata = json.dumps(metadata)
 			# clientSock.sendto(stringMetadata, (UDP_IP_ADDRESS, UDP_PORT_NO))
 			# Perform the writing in a separate thread.
-			thread.start_new_thread( save_as_mat_thread, (data, headset.channel_mask, metadata) )
+			thread.start_new_thread( save_as_mat_thread, (timestamps, data, headset.channel_mask, metadata) )
 
 		except epoc.EPOCTurnedOffError:
 			print("Headset has been disconnected! Trying to reconnect ...")

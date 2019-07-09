@@ -41,7 +41,7 @@ def get_level(raw_data, bits):
         level |= (ord(raw_data[b]) >> o) & 1
     return 0.51*level
 
-def save_as_matlab(_buffer, channel_mask, folder=None, prefix=None, filename=None, metadata=None):
+def save_as_matlab(_buffer, channel_mask, folder=None, prefix=None, filename=None, metadata=None, timestamps=None):
     """Save as matlab data with optional metadata."""
     nr_samples = _buffer[:, 0].size
     nr_channels = _buffer[0, :].size
@@ -60,6 +60,9 @@ def save_as_matlab(_buffer, channel_mask, folder=None, prefix=None, filename=Non
     matlab_data = {}
     matlab_data["data"] = fieldtrip_data
     matlab_data["numberOfChannels"] = nr_channels
+
+    if timestamps:
+	    matlab_data["sampleTimestamps"] = timestamps
 
     # Inject metadata if any
     if metadata:
