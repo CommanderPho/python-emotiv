@@ -61,7 +61,7 @@ def save_as_matlab(_buffer, channel_mask, folder=None, prefix=None, filename=Non
     matlab_data["data"] = fieldtrip_data
     matlab_data["numberOfChannels"] = nr_channels
 
-    if timestamps:
+    if timestamps is not None:
 	    matlab_data["sampleTimestamps"] = timestamps
 
     # Inject metadata if any
