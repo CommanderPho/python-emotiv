@@ -85,8 +85,10 @@ def dataAcquisitionLoop(headset, outlets):
 
 		except KeyboardInterrupt, ki:
 			# Handles keyboard interrupts
+			print("Keyboard interrupt has been performed... trying to disconnect headset...")
 			try:
 				headset.disconnect()
+				print("Successfully disconnected.")
 			except e:
 				print e
 			return 0
