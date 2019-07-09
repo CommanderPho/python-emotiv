@@ -57,22 +57,28 @@ def dataAcquisitionLoop(headset, outlets):
 	# Build the callback function as a lambda function
 	callback_single_single_sample_complete_with_outlet = lambda d: callback_single_sample_complete(outlets['data'], d)
 	while not a_list:
-		data, metadata = headsetRead(headset, callback_single_single_sample_complete_with_outlet)
-		# Push the complete metadata on write
-		metadataOutputVector = []
-		# print("battery type:", type(float(metadata["battery"])))
-		metadataOutputVector.append(float(metadata["battery"]))
-		# print("quality type:", type(metadata["quality"]))
+		try:
+			data, metadata = headsetRead(headset, callback_single_single_sample_complete_with_outlet)
+			# Push the complete metadata on write
+			metadataOutputVector = []
+			# print("battery type:", type(float(metadata["battery"])))
+			metadataOutputVector.append( float( metadata["battery"] ) )
+			# print("quality type:", type(metadata["quality"]))
 
-		metadataOutputVector.extend([metadata["quality"][v] for v in headset.channel_mask])
-		# for i,channel in enumerate(e.channel_mask):
-        #             print "%10s: %.2f %20s: %.2f" % (channel, data[i], "Quality", e.quality[channel])
-		outlets['metadata'].push_sample(pylsl.vectori(metadataOutputVector), pylsl.local_clock())
-		# Send to the UDP server
-		#stringMetadata = json.dumps(metadata)
-		#clientSock.sendto(stringMetadata, (UDP_IP_ADDRESS, UDP_PORT_NO))
-		# Perform the writing in a separate thread.
-		thread.start_new_thread(save_as_mat_thread, (data, headset.channel_mask, metadata))
+			metadataOutputVector.extend( [metadata["quality"][v] for v in headset.channel_mask] )
+			# for i,channel in enumerate(e.channel_mask):
+			#             print "%10s: %.2f %20s: %.2f" % (channel, data[i], "Quality", e.quality[channel])
+			outlets['metadata'].push_sample( pylsl.vectori( metadataOutputVector ), pylsl.local_clock() )
+			# Send to the UDP server
+			# stringMetadata = json.dumps(metadata)
+			# clientSock.sendto(stringMetadata, (UDP_IP_ADDRESS, UDP_PORT_NO))
+			# Perform the writing in a separate thread.
+			thread.start_new_thread( save_as_mat_thread, (data, headset.channel_mask, metadata) )
+
+		except epoc.EPOCTurnedOffError:
+			print("Headset has been disconnected! Trying to reconnect ...")
+
+
 
 
 def setupLabStreamingLayer(headset):
