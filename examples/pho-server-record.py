@@ -20,7 +20,7 @@ UDP_IP_ADDRESS = "10.0.0.90"
 UDP_PORT_NO = 6789
 Message = "Hello, Server"
 PacketSendDuration = 9 #Specifies how long between signal quality packets and saving to .mat file. In seconds.
-ShouldTrackDroppedPackets = True
+ShouldTrackDroppedPackets = False
 
 try:
 	from emotiv import epoc, utils
