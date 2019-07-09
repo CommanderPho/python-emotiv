@@ -29,7 +29,7 @@ except ImportError:
 	from emotiv import epoc, utils
 
 
-def callback_single_sample_complete(outlet, sampleData):
+def callback_single_sample_complete(outlet, sampleTimestamp, sampleData):
 	#print("Items processed: {}. Running result: {}.".format(i, result))
 	outlet.push_sample(pylsl.vectori(sampleData), pylsl.local_clock())
 
@@ -60,7 +60,7 @@ def dataAcquisitionLoop(headset, outlets):
 	a_list = []
 	thread.start_new_thread(input_thread, (a_list,))
 	# Build the callback function as a lambda function
-	callback_single_single_sample_complete_with_outlet = lambda d: callback_single_sample_complete(outlets['data'], d)
+	callback_single_single_sample_complete_with_outlet = lambda t, d: callback_single_sample_complete(outlets['data'], t, d)
 	while not a_list:
 		try:
 			data, metadata = headsetRead(headset, callback_single_single_sample_complete_with_outlet)
