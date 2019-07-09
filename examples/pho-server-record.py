@@ -16,10 +16,13 @@ import time
 import socket
 import json
 
+from pynput import keyboard
+
 UDP_IP_ADDRESS = "10.0.0.90"
 UDP_PORT_NO = 6789
 Message = "Hello, Server"
 PacketSendDuration = 9 #Specifies how long between signal quality packets and saving to .mat file. In seconds.
+a_list = []
 
 try:
 	from emotiv import epoc, utils
@@ -52,7 +55,6 @@ def save_as_mat_thread(data, channel_mask, metadata):
 
 # def dataAcquisitionLoop(headset, outlets, clientSock):
 def dataAcquisitionLoop(headset, outlets):
-	a_list = []
 	thread.start_new_thread(input_thread, (a_list,))
 	# Build the callback function as a lambda function
 	callback_single_single_sample_complete_with_outlet = lambda d: callback_single_sample_complete(outlets['data'], d)
@@ -77,19 +79,6 @@ def dataAcquisitionLoop(headset, outlets):
 
 		except epoc.EPOCTurnedOffError:
 			print("Headset has been disconnected! Trying to reconnect ...")
-
-		except ValueError as e:
-			if e == "The device has no langid":
-				print("The USB Dongle doesn't appear to be connected.")
-				print("\t Please connect it and then try again!")
-				raise
-			else:
-				print("Other Value Error: ", e)
-				raise
-
-
-
-
 
 
 def setupLabStreamingLayer(headset):
@@ -161,3 +150,26 @@ def main():
 
 if __name__ == "__main__":
 	sys.exit(main())
+
+
+## Keyboard Inputs:
+# The key combination to check
+COMBINATIONS = [
+    {keyboard.Key.shift, keyboard.KeyCode(char='a')},
+    {keyboard.Key.shift, keyboard.KeyCode(char='A')}
+]
+
+# The currently active modifiers
+current = set()
+def on_press(key):
+	if any([key in COMBO for COMBO in COMBINATIONS]):
+		current.add(key)
+		if any(all(k in current for k in COMBO) for COMBO in COMBINATIONS):
+			a_list.append(True)
+
+def on_release(key):
+	if any([key in COMBO for COMBO in COMBINATIONS]):
+		current.remove(key)
+
+with keyboard.Listener(on_press=on_press, on_release=on_release) as listener:
+	listener.join()
