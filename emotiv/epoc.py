@@ -335,7 +335,8 @@ class EPOC(object):
 		# Pre-allocate the buffer to hold the data.
 		# TODO: why is this allocated with (total_samples, len(self.channel_mask) + 1) when the regular acquire_data_fast(...) only allocates with (total_samples, len(self.channel_mask))?
 			# The answer is because we prepend each output sample in the buffer with the self.counter value.
-		_timestamps = np.ndarray( (total_samples,), dtype=np.datetime64 )
+		# _timestamps = np.ndarray( (total_samples,), dtype=np.datetime64 )
+		_timestamps = np.ndarray( (total_samples,), dtype='datetime64[us]' )
 		_buffer = np.ndarray( (total_samples, len( self.channel_mask ) + 1), dtype=np.uint16 )
 		ctr = 0
 		while ctr < total_samples:
@@ -351,7 +352,7 @@ class EPOC(object):
 				if sample_callback:
 					sample_callback( timestamp, data )
 				# Prepend sequence numbers
-				_timestamps[ctr] = timestamp
+				_timestamps[ctr] = np.datetime64(timestamp)
 				_buffer[ctr] = np.insert( np.array( data ), 0, self.counter )
 				ctr += 1
 
@@ -363,7 +364,8 @@ class EPOC(object):
 		# Compute the total_samples to acquire from the provided duration
 		total_samples = duration * self.sampling_rate
 		# Pre-allocate the buffer to hold the data.
-		_timestamps = np.ndarray( (total_samples,), dtype=np.datetime64 )
+		# _timestamps = np.ndarray( (total_samples,), dtype=np.datetime64 )
+		_timestamps = np.ndarray( (total_samples,), dtype='datetime64[us]' )
 		_buffer = np.ndarray( (total_samples, len( self.channel_mask ) + 1), dtype=np.uint16 )
 		# TODO: Drop the samples purposefully until the ctr is 0.
 		prev_ctr = self.counter
@@ -385,7 +387,7 @@ class EPOC(object):
 				if sample_callback:
 					sample_callback( timestamp, data )
 				# Prepend sequence numbers
-				_timestamps[curr_data_acq_ctr] = timestamp
+				_timestamps[curr_data_acq_ctr] = np.datetime64(timestamp)
 				_buffer[curr_data_acq_ctr] = np.insert( np.array( data ), 0, self.counter )
 				# This insert statement simply prepends the self.counter scalar onto the front of the data array, making _buffer[curr_data_acq_ctr].shape: (1, (numChannels+1))
 				curr_data_acq_ctr += 1
