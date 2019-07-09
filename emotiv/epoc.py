@@ -340,7 +340,12 @@ class EPOC(object):
 		ctr = 0
 		while ctr < total_samples:
 			# Fetch new data using the regular (get_sample)
-			(timestamp, data) = self.get_sample()
+			try:
+				(timestamp, data) = self.get_sample()
+			except ValueError as e:
+				data = []
+				timestamp = []
+
 			if data:
 				# Send the callback
 				if sample_callback:
@@ -364,8 +369,13 @@ class EPOC(object):
 		prev_ctr = self.counter
 		curr_data_acq_ctr = 0
 		while curr_data_acq_ctr < total_samples:
-			# Fetch new data using the regular (get_sample)
-			(timestamp, data) = self.get_sample()
+			# Fetch new data using the regular
+			try:
+				(timestamp, data) = self.get_sample()
+			except ValueError as e:
+				data = []
+				timestamp = []
+
 			ctr = self.counter
 			if data:
 				# data.shape: (1, numChannels)
@@ -382,7 +392,7 @@ class EPOC(object):
 			else:
 				if (prev_ctr + 1) % 129 != ctr:
 					print "Dropped packets between %d and %d" % (prev_ctr, ctr)
-				print "Empty packet at %d" % (ctr)
+				# print "Empty packet at %d" % (ctr)
 
 			prev_ctr = ctr
 
