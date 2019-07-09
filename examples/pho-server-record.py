@@ -29,8 +29,8 @@ except ImportError:
 
 
 def callback_single_sample_complete(outlet, sampleData):
-    #print("Items processed: {}. Running result: {}.".format(i, result))
-    outlet.push_sample(pylsl.vectori(sampleData), pylsl.local_clock())
+	#print("Items processed: {}. Running result: {}.".format(i, result))
+	outlet.push_sample(pylsl.vectori(sampleData), pylsl.local_clock())
 
 
 def headsetRead(headset, single_sample_read_callback):
@@ -93,7 +93,7 @@ def dataAcquisitionLoop(headset, outlets):
 
 
 def setupLabStreamingLayer(headset):
-    # (self, name='untitled', type='', channel_count=1, nominal_srate=IRREGULAR_RATE, channel_format=cf_float32, source_id='', handle=None)
+	# (self, name='untitled', type='', channel_count=1, nominal_srate=IRREGULAR_RATE, channel_format=cf_float32, source_id='', handle=None)
 	dataStreamInfo = pylsl.stream_info('Emotiv EEG', 'EEG', len(headset.channel_mask), headset.sampling_rate, pylsl.cf_float32, str(headset.serial_number))
 	dataStreamInfo_desc = dataStreamInfo.desc()
 	dataStreamInfo_desc.append_child_value("manufacturer", "Emotiv")
@@ -132,14 +132,15 @@ def main():
 		headset = epoc.EPOC(enable_gyro=False)
 		if channels:
 			headset.set_channel_mask(channels)
-			
 	except ValueError as e:
-		if str(e) == ValueError("The device has no langid"):
-			print("The USB Dongle doesn't appear to be connected.")
+		if str(e) == 'The device has no langid':
+			print("!! ERROR: The USB Dongle doesn't appear to be connected.")
 			print("\t Please connect it and then try again!")
-			raise
+			print("\t!!! Exiting!")
+			exit(1)
 		else:
 			print("Other Value Error: ", e)
+			print("\t!!! Exiting!")
 			raise
 
 	# Setup UDP connection if possible
