@@ -1,0 +1,29 @@
+## This file contains requirements that I'm certain are needed because I installed them manually.
+
+# pi@pho-pi:~/repo/python-emotiv $ which python
+# /usr/bin/python
+
+# pi@pho-pi:~/repo/python-emotiv $ python -V
+# Python 2.7.9
+
+# pi@pho-pi:~/repo/python-emotiv $ which pip
+# /usr/bin/pip
+# pi@pho-pi:~/repo/python-emotiv $ pip -V
+# pip 1.5.6 from /usr/lib/python2.7/dist-packages (python 2.7)
+
+python -m pip install pynput
+# pi@pho-pi:~/repo/python-emotiv $ python -m pip install pynput
+# Downloading/unpacking pynput
+#   Downloading pynput-1.4.2-py2.py3-none-any.whl (73kB): 73kB downloaded
+# Downloading/unpacking python-xlib>=0.17 (from pynput)
+#   Downloading python_xlib-0.25-py2.py3-none-any.whl (165kB): 165kB downloaded
+# Downloading/unpacking enum34 (from pynput)
+#   Downloading enum34-1.1.6-py2-none-any.whl
+# Requirement already satisfied (use --upgrade to upgrade): six in /usr/lib/python2.7/dist-packages (from pynput)
+# Installing collected packages: pynput, python-xlib, enum34
+# Successfully installed pynput python-xlib enum34
+# Cleaning up...
+
+
+
+python -m pip install --upgrade six
