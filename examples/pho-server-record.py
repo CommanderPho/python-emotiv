@@ -20,6 +20,7 @@ UDP_IP_ADDRESS = "10.0.0.90"
 UDP_PORT_NO = 6789
 Message = "Hello, Server"
 PacketSendDuration = 9 #Specifies how long between signal quality packets and saving to .mat file. In seconds.
+ShouldTrackDroppedPackets = True
 
 try:
 	from emotiv import epoc, utils
@@ -35,7 +36,11 @@ def callback_single_sample_complete(outlet, sampleData):
 
 def headsetRead(headset, single_sample_read_callback):
 	#idx, data = headset.acquire_data_fast(9)
-	data = headset.acquire_data(PacketSendDuration, sample_callback=single_sample_read_callback)
+	if ShouldTrackDroppedPackets:
+		data = headset.acquire_data_tracking_dropped(PacketSendDuration, sample_callback=single_sample_read_callback)
+	else:
+		data = headset.acquire_data(PacketSendDuration, sample_callback=single_sample_read_callback)
+
 	print "Battery: %d %%" % headset.battery
 	print "Contact qualities"
 	print headset.quality
