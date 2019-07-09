@@ -78,6 +78,15 @@ def dataAcquisitionLoop(headset, outlets):
 		except epoc.EPOCTurnedOffError:
 			print("Headset has been disconnected! Trying to reconnect ...")
 
+		except ValueError as e:
+			if e == "The device has no langid":
+				print("The USB Dongle doesn't appear to be connected.")
+				print("\t Please connect it and then try again!")
+				raise
+			else:
+				print("Other Value Error: ", e)
+				raise
+
 
 
 
