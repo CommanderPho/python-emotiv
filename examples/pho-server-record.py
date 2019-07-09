@@ -78,6 +78,14 @@ def dataAcquisitionLoop(headset, outlets):
 		except epoc.EPOCTurnedOffError:
 			print("Headset has been disconnected! Trying to reconnect ...")
 
+		except KeyboardInterrupt, ki:
+			# Handles keyboard interrupts
+			try:
+				headset.disconnect()
+			except e:
+				print e
+			return 0
+
 
 def setupLabStreamingLayer(headset):
 	# (self, name='untitled', type='', channel_count=1, nominal_srate=IRREGULAR_RATE, channel_format=cf_float32, source_id='', handle=None)
