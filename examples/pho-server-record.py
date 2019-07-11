@@ -41,10 +41,9 @@ except ImportError:
 def perform_beep(beepDuration=0.5):
     # Should be called on a separate thread since it's blocking
     GPIO.output(buzzerPin,GPIO.HIGH)
-    print ("Beep")
     time.sleep(beepDuration) # Delay in seconds
     GPIO.output(buzzerPin,GPIO.LOW)
-    print ("No Beep")
+
 
 def callback_single_sample_complete(outlet, sampleTimestamp, sampleData):
 	#print("Items processed: {}. Running result: {}.".format(i, result))
@@ -73,8 +72,10 @@ def save_as_mat_thread(timestamps, data, channel_mask, metadata):
 	utils.save_as_matlab(data, channel_mask, folder="../eeg_data", metadata=metadata, timestamps=timestamps)
 
 # def dataAcquisitionLoop(headset, outlets, clientSock):
-def dataAcquisitionLoop(headset, outlets):
+def dataAcquisitionLoop(headset, outlets, stopAfterCompletePackets=None):
+    # If stopAfterCompletePackets is not none, the loop only continues for stopAfterCompletePackets number of packets
 	a_list = []
+	num_packets = 0
 	thread.start_new_thread(input_thread, (a_list,))
 	# Build the callback function as a lambda function
 	callback_single_sample_complete_with_outlet = lambda t, d: callback_single_sample_complete(outlets['data'], t, d)
@@ -96,6 +97,14 @@ def dataAcquisitionLoop(headset, outlets):
 			# clientSock.sendto(stringMetadata, (UDP_IP_ADDRESS, UDP_PORT_NO))
 			# Perform the writing in a separate thread.
 			thread.start_new_thread( save_as_mat_thread, (timestamps, data, headset.channel_mask, metadata) )
+			# Increment the counter
+			num_packets = num_packets + 1
+
+			if stopAfterCompletePackets:
+				if num_packets >= stopAfterCompletePackets:
+					thread.start_new_thread(perform_beep, (8.0,))
+					print('reached desired number of packets ({}), quitting at {}'.format(stopAfterCompletePackets, time.strftime("%d-%m-%Y %H:%M:%S")))
+					break
 
 		except epoc.EPOCTurnedOffError:
 			print("Headset has been disconnected! Trying to reconnect ...")
@@ -105,7 +114,7 @@ def dataAcquisitionLoop(headset, outlets):
 			print("Keyboard interrupt has been performed... trying to disconnect headset...")
 			try:
 				headset.disconnect()
-				print("Successfully disconnected.")
+				print("Successfully disconnected at {}".format(time.strftime("%d-%m-%Y %H:%M:%S")))
 			except e:
 				print e
 			return 0
@@ -171,8 +180,9 @@ def main():
 	outlets = setupLabStreamingLayer(headset)
 	thread.start_new_thread(perform_beep, (1.0,))
 	# Acquire
+	print("Starting data acquisition loop at {}".format(time.strftime("%d-%m-%Y %H:%M:%S")))
 	# dataAcquisitionLoop(headset, outlets, clientSock)
-	dataAcquisitionLoop(headset, outlets)
+	dataAcquisitionLoop(headset, outlets, stopAfterCompletePackets=2)
 	#print "Data Acquisition Terminated."
 	try:
 		headset.disconnect()
