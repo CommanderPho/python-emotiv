@@ -16,11 +16,21 @@ import time
 import socket
 import json
 
+import RPi.GPIO as GPIO
+
 UDP_IP_ADDRESS = "10.0.0.90"
 UDP_PORT_NO = 6789
 Message = "Hello, Server"
 PacketSendDuration = 9 #Specifies how long between signal quality packets and saving to .mat file. In seconds.
 ShouldTrackDroppedPackets = False
+
+#Disable warnings (optional)
+GPIO.setwarnings(False)
+#Select GPIO mode
+GPIO.setmode(GPIO.BCM)
+#Set buzzer - pin 18 as output
+buzzerPin=18
+GPIO.setup(buzzerPin, GPIO.OUT)
 
 try:
 	from emotiv import epoc, utils
@@ -28,6 +38,13 @@ except ImportError:
 	sys.path.insert(0, "..")
 	from emotiv import epoc, utils
 
+def perform_blocking_beep():
+    GPIO.output(buzzerPin,GPIO.HIGH)
+    print ("Beep")
+    time.sleep(0.5) # Delay in seconds
+    GPIO.output(buzzerPin,GPIO.LOW)
+    print ("No Beep")
+    time.sleep(0.5)
 
 def callback_single_sample_complete(outlet, sampleTimestamp, sampleData):
 	#print("Items processed: {}. Running result: {}.".format(i, result))
@@ -122,7 +139,7 @@ def setupLabStreamingLayer(headset):
 
 def main():
 	print "Running Data Aquisition: Press any key to terminate at the end of the block."
-
+	perform_blocking_beep()
 	channels = None
 	try:
 		channels = sys.argv[1].split(",")
@@ -151,7 +168,7 @@ def main():
 
 	# Setup LabStreamingLayer connection
 	outlets = setupLabStreamingLayer(headset)
-
+	perform_blocking_beep()
 	# Acquire
 	# dataAcquisitionLoop(headset, outlets, clientSock)
 	dataAcquisitionLoop(headset, outlets)
