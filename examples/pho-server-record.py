@@ -67,6 +67,12 @@ def input_thread(a_list):
 	raw_input()
 	a_list.append(True)
 
+def idle_until_all_threads_finish():
+    # This function just blocks idles until all running threads have successfully finished before returning.
+	# It can be used to allow background threads (like writing to file) to finish up before the program quits.
+	print('Waiting on background threads...')
+	time.sleep(2.5)
+	# TODO: this is currently just sleeping a fixed amount of time to permit the writing out to file to finish. Need to transition to the recommended "threading" module instead of "thread"
 
 def save_as_mat_thread(timestamps, data, channel_mask, metadata):
 	utils.save_as_matlab(data, channel_mask, folder="../eeg_data", metadata=metadata, timestamps=timestamps)
@@ -112,12 +118,16 @@ def dataAcquisitionLoop(headset, outlets, stopAfterCompletePackets=None):
 		except KeyboardInterrupt, ki:
 			# Handles keyboard interrupts
 			print("Keyboard interrupt has been performed... trying to disconnect headset...")
+			idle_until_all_threads_finish()
 			try:
 				headset.disconnect()
 				print("Successfully disconnected at {}".format(time.strftime("%d-%m-%Y %H:%M:%S")))
 			except e:
 				print e
 			return 0
+
+	# after the while loop is finished
+	idle_until_all_threads_finish()
 
 
 def setupLabStreamingLayer(headset):
