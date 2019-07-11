@@ -192,7 +192,8 @@ def main():
 	# Acquire
 	print("Starting data acquisition loop at {}".format(time.strftime("%d-%m-%Y %H:%M:%S")))
 	# dataAcquisitionLoop(headset, outlets, clientSock)
-	dataAcquisitionLoop(headset, outlets, stopAfterCompletePackets=10)
+	dataAcquisitionLoop(headset, outlets)
+	# dataAcquisitionLoop(headset, outlets, stopAfterCompletePackets=10)
 	#print "Data Acquisition Terminated."
 	try:
 		headset.disconnect()
