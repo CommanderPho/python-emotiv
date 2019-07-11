@@ -38,13 +38,13 @@ except ImportError:
 	sys.path.insert(0, "..")
 	from emotiv import epoc, utils
 
-def perform_blocking_beep():
+def perform_beep(beepDuration=0.5):
+    # Should be called on a separate thread since it's blocking
     GPIO.output(buzzerPin,GPIO.HIGH)
     print ("Beep")
-    time.sleep(0.5) # Delay in seconds
+    time.sleep(beepDuration) # Delay in seconds
     GPIO.output(buzzerPin,GPIO.LOW)
     print ("No Beep")
-    time.sleep(0.5)
 
 def callback_single_sample_complete(outlet, sampleTimestamp, sampleData):
 	#print("Items processed: {}. Running result: {}.".format(i, result))
@@ -77,10 +77,10 @@ def dataAcquisitionLoop(headset, outlets):
 	a_list = []
 	thread.start_new_thread(input_thread, (a_list,))
 	# Build the callback function as a lambda function
-	callback_single_single_sample_complete_with_outlet = lambda t, d: callback_single_sample_complete(outlets['data'], t, d)
+	callback_single_sample_complete_with_outlet = lambda t, d: callback_single_sample_complete(outlets['data'], t, d)
 	while not a_list:
 		try:
-			timestamps, data, metadata = headsetRead(headset, callback_single_single_sample_complete_with_outlet)
+			timestamps, data, metadata = headsetRead(headset, callback_single_sample_complete_with_outlet)
 			# Push the complete metadata on write
 			metadataOutputVector = []
 			# print("battery type:", type(float(metadata["battery"])))
@@ -139,7 +139,6 @@ def setupLabStreamingLayer(headset):
 
 def main():
 	print "Running Data Aquisition: Press any key to terminate at the end of the block."
-	perform_blocking_beep()
 	channels = None
 	try:
 		channels = sys.argv[1].split(",")
@@ -153,11 +152,13 @@ def main():
 			headset.set_channel_mask(channels)
 	except ValueError as e:
 		if str(e) == 'The device has no langid':
+			thread.start_new_thread(perform_beep, (3.0,))
 			print("!! ERROR: The USB Dongle doesn't appear to be connected.")
 			print("\t Please connect it and then try again!")
 			print("\t!!! Exiting!")
 			exit(1)
 		else:
+			thread.start_new_thread(perform_beep, (3.0,))
 			print("Other Value Error: ", e)
 			print("\t!!! Exiting!")
 			raise
@@ -168,7 +169,7 @@ def main():
 
 	# Setup LabStreamingLayer connection
 	outlets = setupLabStreamingLayer(headset)
-	perform_blocking_beep()
+	thread.start_new_thread(perform_beep, (1.0,))
 	# Acquire
 	# dataAcquisitionLoop(headset, outlets, clientSock)
 	dataAcquisitionLoop(headset, outlets)
