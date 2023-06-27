@@ -68,3 +68,19 @@ Authors
 =======
 
 Ozan Çağlayan, Galatasaray University, Computer Engineering Dept.
+
+
+# Pho New Setup 2022-02-22
+
+pyenv install 2.7.18
+
+C:\Users\pho\.pyenv\pyenv-win\versions\2.7.18\python.exe
+poetry env use C:\Users\pho\.pyenv\pyenv-win\versions\2.7.18\python.exe
+
+TODO: NOT YET WORKING, fell back to use conda environment py2_emotiv_epoc or w/e
+
+```python
+
+mamba install pyusb pycrypto scipy numpy matplotlib -c conda-forge
+
+```

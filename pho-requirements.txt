@@ -27,3 +27,47 @@ python -m pip install pynput
 
 
 python -m pip install --upgrade six
+
+
+## 2022-10-26 on Diet-Pi 
+# root@diet-pi:~/repo/epoc_backups/python-emotiv# which python
+# /usr/bin/python
+# root@diet-pi:~/repo/epoc_backups/python-emotiv# python -V
+# Python 2.7.16
+# root@diet-pi:~/repo/epoc_backups/python-emotiv# which pip
+# /usr/local/bin/pip
+# root@diet-pi:~/repo/epoc_backups/python-emotiv# pip -V
+# pip 20.3.1 from /usr/local/lib/python2.7/dist-packages/pip (python 2.7)
+# root@diet-pi:~/repo/epoc_backups/python-emotiv# 
+
+
+# root@diet-pi:~/repo/epoc_backups/python-emotiv# python -m pip install pynput
+# DEPRECATION: Python 2.7 reached the end of its life on January 1st, 2020. Please upgrade your Python as Python 2.7 is no longer maintained. pip 21.0 will drop support for Python 2.7 in January 2021. More details about Python 2 support in pip can be found at https://pip.pypa.io/en/latest/development/release-process/#python-2-support pip 21.0 will remove support for this functionality.
+# Looking in indexes: https://pypi.org/simple, https://www.piwheels.org/simple
+# Collecting pynput
+#   Downloading pynput-1.7.6-py2.py3-none-any.whl (89 kB)
+#      |████████████████████████████████| 89 kB 1.0 MB/s 
+# Requirement already satisfied: enum34; python_version == "2.7" in /usr/lib/python2.7/dist-packages (from pynput) (1.1.6)
+# Requirement already satisfied: six in /usr/lib/python2.7/dist-packages (from pynput) (1.12.0)
+# Collecting python-xlib>=0.17; "linux" in sys_platform
+#   Downloading python_xlib-0.31-py2.py3-none-any.whl (179 kB)
+#      |████████████████████████████████| 179 kB 2.1 MB/s 
+# Requirement already satisfied: evdev>=1.3; "linux" in sys_platform in /usr/local/lib/python2.7/dist-packages (from pynput) (1.4.0)
+# Installing collected packages: python-xlib, pynput
+# Successfully installed pynput-1.7.6 python-xlib-0.31
+# WARNING: You are using pip version 20.3.1; however, version 20.3.4 is available.
+# You should consider upgrading via the '/usr/bin/python -m pip install --upgrade pip' command.
+# root@diet-pi:~/repo/epoc_backups/python-emotiv# python -m pip install --upgrade six
+# DEPRECATION: Python 2.7 reached the end of its life on January 1st, 2020. Please upgrade your Python as Python 2.7 is no longer maintained. pip 21.0 will drop support for Python 2.7 in January 2021. More details about Python 2 support in pip can be found at https://pip.pypa.io/en/latest/development/release-process/#python-2-support pip 21.0 will remove support for this functionality.
+# Looking in indexes: https://pypi.org/simple, https://www.piwheels.org/simple
+# Collecting six
+#   Downloading six-1.16.0-py2.py3-none-any.whl (11 kB)
+# Installing collected packages: six
+#   Attempting uninstall: six
+#     Found existing installation: six 1.12.0
+#     Uninstalling six-1.12.0:
+#       Successfully uninstalled six-1.12.0
+# Successfully installed six-1.16.0
+# WARNING: You are using pip version 20.3.1; however, version 20.3.4 is available.
+# You should consider upgrading via the '/usr/bin/python -m pip install --upgrade pip' command.
+# root@diet-pi:~/repo/epoc_backups/python-emotiv# 
