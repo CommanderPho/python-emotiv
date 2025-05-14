@@ -27,3 +27,9 @@ python -m pip install pynput
 
 
 python -m pip install --upgrade six
+
+
+#   File "/usr/local/lib/python2.7/dist-packages/Xlib/support/unix_connect.py", line 76, in get_display
+#     raise error.DisplayNameError(display)
+# Xlib.error.DisplayNameError: Bad display name ""
+# Will occur over SSH because X server isn't running
