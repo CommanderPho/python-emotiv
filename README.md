@@ -71,3 +71,43 @@ Authors
 =======
 
 Ozan Çağlayan, Galatasaray University, Computer Engineering Dept.
+
+
+======================================================
+macOS Setup (Pho)
+========================
+```zsh
+brew install pygobject3 gtk+3
+pyenv exec python -m pip install --upgrade pip
+pyenv exec python -m pip install virtualenv
+pyenv exec python -m virtualenv .venv
+source .venv/bin/activate
+python setup.py install
+```
+
+```zsh
+(.venv) ➜  python-emotiv git:(feature/modernize-2025) ✗ pyenv exec python setup.py install
+running install
+running build
+running build_py
+creating build
+creating build/lib
+creating build/lib/emotiv
+copying emotiv/epoc.py -> build/lib/emotiv
+copying emotiv/analysis.py -> build/lib/emotiv
+copying emotiv/__init__.py -> build/lib/emotiv
+copying emotiv/utils.py -> build/lib/emotiv
+running install_lib
+creating /Users/pho/.pyenv/versions/2.7.18/lib/python2.7/site-packages/emotiv
+copying build/lib/emotiv/epoc.py -> /Users/pho/.pyenv/versions/2.7.18/lib/python2.7/site-packages/emotiv
+copying build/lib/emotiv/analysis.py -> /Users/pho/.pyenv/versions/2.7.18/lib/python2.7/site-packages/emotiv
+copying build/lib/emotiv/__init__.py -> /Users/pho/.pyenv/versions/2.7.18/lib/python2.7/site-packages/emotiv
+copying build/lib/emotiv/utils.py -> /Users/pho/.pyenv/versions/2.7.18/lib/python2.7/site-packages/emotiv
+byte-compiling /Users/pho/.pyenv/versions/2.7.18/lib/python2.7/site-packages/emotiv/epoc.py to epoc.pyc
+byte-compiling /Users/pho/.pyenv/versions/2.7.18/lib/python2.7/site-packages/emotiv/analysis.py to analysis.pyc
+byte-compiling /Users/pho/.pyenv/versions/2.7.18/lib/python2.7/site-packages/emotiv/__init__.py to __init__.pyc
+byte-compiling /Users/pho/.pyenv/versions/2.7.18/lib/python2.7/site-packages/emotiv/utils.py to utils.pyc
+running install_data
+creating /etc/udev
+error: could not create '/etc/udev': Permission denied
+```
